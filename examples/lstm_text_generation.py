@@ -26,7 +26,7 @@ Pre-processing of text uses snippets of Karpathy's code (BSD License)
 
 from __future__ import print_function
 
-
+import os
 import numpy as np
 import theano
 import theano.tensor as T
@@ -116,8 +116,16 @@ def save(filename, model, avg_loss, epoch, p):
             'epoch': epoch,
             'p': p,
     }
-    with open(filename, 'w') as f:
+    with open(filename, 'wb') as f:
         pickle.dump(data, f)
+
+def load(filename, model):
+    with open(filename, 'rb') as f:
+        data = pickle.load(f)
+    lasagne.layers.set_all_param_values(model, data['modelparams'])
+    return (data['avg_loss'],
+            data['epoch'],
+            data['p'],)
 
 def main(num_epochs=NUM_EPOCHS):
     print("Building network ...")
@@ -223,6 +231,9 @@ def main(num_epochs=NUM_EPOCHS):
     print("Seed used for text generation is: " + generation_phrase)
     best_avg_loss = None
     p = 0
+
+    if os.path.exists('models/best_model.pkl'):
+        avg_loss, epoch, p = load('models/best_model.pkl', l_out)
     try:
         for it in xrange(data_size * num_epochs / BATCH_SIZE):
             try_it_out() # Generate text using the p^th character as the start.
