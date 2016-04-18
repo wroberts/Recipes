@@ -122,7 +122,7 @@ def save(filename, model, avg_loss, epoch, p):
 def load(filename, model):
     with open(filename, 'rb') as f:
         data = pickle.load(f)
-    lasagne.layers.set_all_param_values(model, data['modelparams'])
+    lasagne.layers.set_all_param_values(model, data['modelparams'], trainable=True)
     return (data['avg_loss'],
             data['epoch'],
             data['p'],)
