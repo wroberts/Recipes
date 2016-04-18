@@ -244,6 +244,7 @@ def main(num_epochs=NUM_EPOCHS):
             print("Epoch {} average loss = {}".format(epoch, avg_loss))
             if best_avg_loss is None or avg_loss < best_avg_loss:
                 save('models/best_model.pkl', l_out, avg_loss, epoch, p)
+                best_avg_loss = avg_loss
 
     except KeyboardInterrupt:
         pass
