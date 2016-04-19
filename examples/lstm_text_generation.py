@@ -107,27 +107,7 @@ def gen_data(p, batch_size = BATCH_SIZE, data=in_text, return_target=True):
             y[n] = char_to_ix[data[p+ptr+SEQ_LENGTH]]
     return x, np.array(y,dtype='int32')
 
-# https://gist.github.com/senbon/70adf5410950c0dc882b
-import cPickle as pickle
-def save(filename, model, avg_loss, epoch, p):
-    """Pickels the parameters within a Lasagne model."""
-    data = {'modelparams': lasagne.layers.get_all_params(model, trainable=True),
-            'avg_loss': avg_loss,
-            'epoch': epoch,
-            'p': p,
-    }
-    with open(filename, 'w') as f:
-        pickle.dump(data, f)
-
-def load(filename, model):
-    with open(filename, 'r') as f:
-        data = pickle.load(f)
-    lasagne.layers.set_all_param_values(model, data['modelparams'], trainable=True)
-    return (data['avg_loss'],
-            data['epoch'],
-            data['p'],)
-
-def main(num_epochs=NUM_EPOCHS):
+def build_network():
     print("Building network ...")
 
     # First, we build the network, starting with an input layer
@@ -182,6 +162,31 @@ def main(num_epochs=NUM_EPOCHS):
     # In order to produce the probability distribution of the prediction, we compile a function called probs.
 
     probs = theano.function([l_in.input_var],network_output,allow_input_downcast=True)
+
+    return train, l_out, probs
+
+# https://gist.github.com/senbon/70adf5410950c0dc882b
+import cPickle as pickle
+def save(filename, model, avg_loss, epoch, p):
+    """Pickels the parameters within a Lasagne model."""
+    data = {'modelparams': lasagne.layers.get_all_params(model, trainable=True),
+            'avg_loss': avg_loss,
+            'epoch': epoch,
+            'p': p,
+    }
+    with open(filename, 'w') as f:
+        pickle.dump(data, f)
+
+def load(filename, model):
+    with open(filename, 'r') as f:
+        data = pickle.load(f)
+    lasagne.layers.set_all_param_values(model, data['modelparams'], trainable=True)
+    return (data['avg_loss'],
+            data['epoch'],
+            data['p'],)
+
+def main(num_epochs=NUM_EPOCHS):
+    train, l_out, probs = build_network()
 
     # The next function generates text given a phrase of length at least SEQ_LENGTH.
     # The phrase is set using the variable generation_phrase.
