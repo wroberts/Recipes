@@ -180,7 +180,11 @@ def save(filename, model, avg_loss, epoch, p):
 def load(filename, model):
     with open(filename, 'r') as f:
         data = pickle.load(f)
-    lasagne.layers.set_all_param_values(model, data['modelparams'], trainable=True)
+    mparams = data['modelparams']
+    for i in range(len(mparams)):
+        if isinstance(mparams[i], theano.tensor.sharedvar.TensorSharedVariable):
+            mparams[i] = mparams[i].get_value()
+    lasagne.layers.set_all_param_values(model, mparams, trainable=True)
     return (data['avg_loss'],
             data['epoch'],
             data['p'],)
