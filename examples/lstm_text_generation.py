@@ -246,7 +246,7 @@ def main(num_epochs=NUM_EPOCHS):
     try:
         for it in xrange(data_size * num_epochs / BATCH_SIZE):
             try_it_out() # Generate text using the p^th character as the start.
-            print 'Time: {:.3f}'.format(time.time() - start_time)
+            print('Time: {:.3f}'.format(time.time() - start_time))
 
             avg_cost = 0
             for _ in range(PRINT_FREQ):
