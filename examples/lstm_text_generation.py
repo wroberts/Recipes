@@ -243,6 +243,7 @@ def main(num_epochs=NUM_EPOCHS):
     if os.path.exists('models/best_model.pkl'):
         avg_loss, epoch, p = load('models/best_model.pkl', l_out)
         best_avg_loss = avg_loss
+        print('Loaded model with avg_loss={}, epoch={}, p={}'.format(avg_loss, epoch, p))
     try:
         for it in xrange(data_size * num_epochs / BATCH_SIZE):
             try_it_out() # Generate text using the p^th character as the start.
