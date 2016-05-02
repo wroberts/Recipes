@@ -30,6 +30,7 @@ import os
 import numpy as np
 import theano
 import theano.tensor as T
+import time
 import lasagne
 import urllib2 #For downloading the sample text file. You won't need this if you are providing your own file.
 try:
@@ -237,6 +238,7 @@ def main(num_epochs=NUM_EPOCHS):
     print("Seed used for text generation is: " + generation_phrase)
     best_avg_loss = None
     p = 0
+    start_time = time.time()
 
     if os.path.exists('models/best_model.pkl'):
         avg_loss, epoch, p = load('models/best_model.pkl', l_out)
@@ -244,6 +246,7 @@ def main(num_epochs=NUM_EPOCHS):
     try:
         for it in xrange(data_size * num_epochs / BATCH_SIZE):
             try_it_out() # Generate text using the p^th character as the start.
+            print 'Time: {:.3f}'.format(time.time() - start_time)
 
             avg_cost = 0
             for _ in range(PRINT_FREQ):
